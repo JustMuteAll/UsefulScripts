@@ -24,8 +24,8 @@ def split_data(Img_folder,Caption_file,split_ratio):
     np.random.shuffle(index)
 
     # split the data 
-    train_index = index[:int(num*split_ratio)]
-    test_index = index[int(num*split_ratio):]
+    train_index = np.sort(index[:int(num*split_ratio)])
+    test_index = np.sort(index[int(num*split_ratio):])
     train_Img = [Img_list[i] for i in train_index]
     test_Img = [Img_list[i] for i in test_index]
     train_Caption = [Caption_list[i] for i in train_index]
@@ -39,8 +39,10 @@ def split_data(Img_folder,Caption_file,split_ratio):
     if not os.path.exists(test_folder):
         os.makedirs(test_folder)
     for img in train_Img:
+        print(img)
         shutil.copy(os.path.join(Img_folder, img), train_folder)
     for img in test_Img:
+        print(img)
         shutil.copy(os.path.join(Img_folder, img), test_folder)
     
     # save the captions in seperate files
