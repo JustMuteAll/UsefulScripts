@@ -46,11 +46,37 @@ resp_right_IT = resp_right_mean[:,IT_right_index]
 resp_left_EVC = resp_left_mean[:,EVC_left_index]
 resp_right_EVC = resp_right_mean[:,EVC_right_index]
 
-print(resp_left_IT.shape,resp_right_IT.shape)
-print(resp_left_EVC.shape,resp_right_EVC.shape)
+# merge the left and right data
+resp_IT = np.concatenate([resp_left_IT,resp_right_IT],axis=1)
+resp_EVC = np.concatenate([resp_left_EVC,resp_right_EVC],axis=1)
 
 # save the data
-np.save(r"C:\Users\DELL\Desktop\Predict\resp_left_IT.npy",resp_left_IT)
-np.save(r"C:\Users\DELL\Desktop\Predict\resp_right_IT.npy",resp_right_IT)
-np.save(r"C:\Users\DELL\Desktop\Predict\resp_left_EVC.npy",resp_left_EVC)
-np.save(r"C:\Users\DELL\Desktop\Predict\resp_right_EVC.npy",resp_right_EVC)
+np.save(r"C:\Users\DELL\Desktop\Predict\resp_IT.npy",resp_IT)
+np.save(r"C:\Users\DELL\Desktop\Predict\resp_EVC.npy",resp_EVC)
+
+# first read the index from train and test image dataset
+img_train_folder = r"C:\Users\DELL\Desktop\Predict\train_img"
+img_test_folder = r"C:\Users\DELL\Desktop\Predict\test_img"
+train_idx = np.sort([int(img.split(".")[0]) for img in os.listdir(img_train_folder)])
+test_idx = np.sort([int(img.split(".")[0]) for img in os.listdir(img_test_folder)])
+
+# split the resp data into train and test
+resp_IT = np.load(r"C:\Users\DELL\Desktop\Predict\resp_IT.npy",allow_pickle=True)
+resp_EVC = np.load(r"C:\Users\DELL\Desktop\Predict\resp_EVC.npy",allow_pickle=True)
+
+resp_IT_train = resp_IT[train_idx-1,:]
+resp_IT_test = resp_IT[test_idx-1,:]
+resp_EVC_train = resp_EVC[train_idx-1,:]
+resp_EVC_test = resp_EVC[test_idx-1,:]
+
+# delete the zero columns
+resp_IT_train = resp_IT_train[:,~np.all(resp_IT_train == 0, axis=0)]
+resp_IT_test = resp_IT_test[:,~np.all(resp_IT_test == 0, axis=0)]
+resp_EVC_train = resp_EVC_train[:,~np.all(resp_EVC_train == 0, axis=0)]
+resp_EVC_test = resp_EVC_test[:,~np.all(resp_EVC_test == 0, axis=0)]
+
+# save the splited data
+np.save(r"C:\Users\DELL\Desktop\Predict\resp_IT_train.npy",resp_IT_train)
+np.save(r"C:\Users\DELL\Desktop\Predict\resp_IT_test.npy",resp_IT_test)
+np.save(r"C:\Users\DELL\Desktop\Predict\resp_EVC_train.npy",resp_EVC_train)
+np.save(r"C:\Users\DELL\Desktop\Predict\resp_EVC_test.npy",resp_EVC_test)
